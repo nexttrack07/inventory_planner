@@ -1,27 +1,23 @@
 import React, { Component } from 'react';
 import ActionButton from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
+import _ from 'lodash';
 import { StyleSheet, Text, View } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import firebase from 'firebase';
+import { connect } from 'react-redux';
+import { productsFetch } from '../actions';
 import ProductCard from './ProductCard';
 
 class ProductList extends Component {
-
     componentWillMount() {
+        this.props.productsFetch();
+    }
+    renderProductCards() {
         
     }
 
-    renderProductCards() {
-        const db = firebase.firestore();
-        const settings = {timestampsInSnapshots:true};
-        db.settings(settings);
-        db.collection("products").get().then((querySnapshot) => {
-            querySnapshot.forEach(doc =>  <ProductCard key={doc.data().id} doc={doc} />)
-        }).catch((error) => console.log(error));
-    }
-
     render() {
+        console.log(this.props.products);
         return (
             <View style={{flex:1, backgroundColor: '#f3f3f3', padding: 10}}>
                 {this.renderProductCards()}
@@ -47,4 +43,11 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProductList;
+const mapStateToProps = (state) => {
+    const products = _.map(state.product.products, (val, uid) => {
+        return { ...val, uid };
+    })
+
+    return { products };
+}
+export default connect(mapStateToProps, { productsFetch })(ProductList);

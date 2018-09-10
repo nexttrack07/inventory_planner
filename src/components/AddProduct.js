@@ -1,26 +1,15 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import Input from './common/Input';
-import Button from './common/Button';
 import { connect } from 'react-redux';
-import { addProduct } from '../actions'
+import { addProduct, uploadProduct } from '../actions/ProductActions'
+import { Input, Button } from './common';
 import firebase from 'firebase';
-import '@firebase/firestore';
 
 class AddProduct extends Component {
     onButtonPress = () => {
-        const db = firebase.firestore();
-        const settings = {timestampsInSnapshots:true};
-        db.settings(settings);
+        const { product, cost, quantity, leadTime, sales } = this.props;
+        this.props.uploadProduct({ product, cost, quantity, leadTime, sales }) 
 
-        db.collection("products").add({
-            product_name: this.props.product,
-            quantity: this.props.quantity,
-            sales: this.props.sales,
-            cost: this.props.cost,
-            lead_time: this.props.leadTime
-        }).then(()=>console.log('Added product'))
-        .catch(() => console.log('error'));
     }
     render() {
         return (
@@ -35,27 +24,27 @@ class AddProduct extends Component {
                     label='Qty'
                     placeholder='Quantity Available'
                     onChangeText={value => this.props.addProduct({ prop: 'quantity', value })}
-                    value={this.props.quantity}
+                    value={this.props.quantity.toString()}
                 />
                 <Input
                     label='Sales'
                     placeholder='Average Daily Sales'
                     onChangeText={value => this.props.addProduct({ prop: 'sales', value })}
-                    value={this.props.sales}
+                    value={this.props.sales.toString()}
                 />
                 <Input
                     label='Lead Time'
                     placeholder='Total Lead Time'
                     onChangeText={value => this.props.addProduct({ prop: 'leadTime', value })}
-                    value={this.props.leadTime}
+                    value={this.props.leadTime.toString()}
                 />
                 <Input
                     label='CPU'
                     placeholder='Cost Per Unit'
                     onChangeText={value => this.props.addProduct({ prop: 'cost', value })}
-                    value={this.props.cost}
+                    value={this.props.cost.toString()}
                 />
-                <Button text="Save" onPress={()=>this.onButtonPress()} />
+                <Button text="Save" onPress={() => this.onButtonPress()} />
             </View>
         );
     };
@@ -74,4 +63,4 @@ const mapStateToProps = (state) => {
     return { product, cost, quantity, leadTime, sales };
 }
 
-export default connect(mapStateToProps, { addProduct })(AddProduct);
+export default connect(mapStateToProps, { addProduct, uploadProduct })(AddProduct);

@@ -1,5 +1,6 @@
-import { ADD_PRODUCT } from './types';
+import { ADD_PRODUCT, PRODUCT_ADDED, PRODUCT_FETCH_SUCCESS } from './types';
 import firebase from 'firebase';
+import { Actions } from 'react-native-router-flux';
 
 export const addProduct = ({ prop, value }) => {
     return {
@@ -9,7 +10,22 @@ export const addProduct = ({ prop, value }) => {
 }
 
 export const productsFetch = () => {
+    const { currentUser } = firebase.auth();
     return (dispatch) => {
-        console.log(dispatch);
+        firebase.database().ref(`/users/${currentUser.uid}/products`)
+        .on('value', snapshot => {
+            dispatch({ type: PRODUCT_FETCH_SUCCESS, payload: snapshot.val() })
+        })
+    }
+}
+
+export const uploadProduct = ({ product, cost, quantity, leadTime, sales }) => {
+    const { currentUser } = firebase.auth();
+    return (dispatch) => {
+        firebase.database().ref(`users/${currentUser.uid}/products`).push({
+        product, cost, quantity, sales, leadTime })
+        .then(() => Actions.productList());
+        
+        dispatch({ type: PRODUCT_ADDED })
     }
 }
