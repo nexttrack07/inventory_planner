@@ -1,53 +1,41 @@
-import React, { Component } from 'react';
-import ActionButton from 'react-native-action-button';
-import Icon from 'react-native-vector-icons/Ionicons';
-import _ from 'lodash';
-import { StyleSheet, Text, View } from 'react-native';
-import { Actions } from 'react-native-router-flux';
-import { connect } from 'react-redux';
-import { productsFetch } from '../actions';
-import ProductCard from './ProductCard';
+import React, { Component } from "react";
+import _ from "lodash";
+import { StyleSheet, Text, FlatList, View, ScrollView } from "react-native";
+import { connect } from "react-redux";
+import { productsFetch } from "../actions";
+import ProductCard from "./ProductCard";
 
 class ProductList extends Component {
-    componentWillMount() {
-        this.props.productsFetch();
-    }
-    renderProductCards() {
-        
-    }
+  componentWillMount() {
+    this.props.productsFetch();
+  }
 
-    render() {
-        console.log(this.props.products);
-        return (
-            <View style={{flex:1, backgroundColor: '#f3f3f3', padding: 10}}>
-                {this.renderProductCards()}
-                <ActionButton buttonColor="rgba(231,76,60,1)">
-                    <ActionButton.Item 
-                        buttonColor='#9b59b6'
-                        title="Add Product"
-                        onPress={() => Actions.addProduct()}
-                    >
-                        <Icon name="md-create" style={styles.actionButtonIcon} />
-                    </ActionButton.Item>
-                </ActionButton>
-            </View>
-        )
-    }
+  _keyExtractor = (product, index) => product.uid;
+
+  render() {
+    console.log(this.props.products);
+    return (
+      <ScrollView style={{ flex: 1, backgroundColor: "#f3f3f3", padding: 10 }}>
+        <FlatList
+          data={this.products}
+          keyExtractor={this._keyExtractor}
+          renderItem={({ item }) => (
+            <ProductCard key={item.uid} product={item} />
+          )}
+        />
+      </ScrollView>
+    );
+  }
 }
 
-const styles = StyleSheet.create({
-  actionButtonIcon: {
-    fontSize: 20,
-    height: 22,
-    color: 'white',
-  },
-});
+const mapStateToProps = state => {
+  const products = _.map(state.product.products, (val, uid) => {
+    return { ...val, uid };
+  });
 
-const mapStateToProps = (state) => {
-    const products = _.map(state.product.products, (val, uid) => {
-        return { ...val, uid };
-    })
-
-    return { products };
-}
-export default connect(mapStateToProps, { productsFetch })(ProductList);
+  return { products };
+};
+export default connect(
+  mapStateToProps,
+  { productsFetch }
+)(ProductList);
