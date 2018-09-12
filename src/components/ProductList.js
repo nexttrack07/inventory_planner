@@ -6,18 +6,18 @@ import { productsFetch } from "../actions";
 import ProductCard from "./ProductCard";
 
 class ProductList extends Component {
+  _keyExtractor = (product, index) => product.uid;
   componentWillMount() {
+    console.log("Product List Mounted");
     this.props.productsFetch();
   }
-
-  _keyExtractor = (product, index) => product.uid;
 
   render() {
     console.log(this.props.products);
     return (
       <ScrollView style={{ flex: 1, backgroundColor: "#f3f3f3", padding: 10 }}>
         <FlatList
-          data={this.products}
+          data={this.props.products}
           keyExtractor={this._keyExtractor}
           renderItem={({ item }) => (
             <ProductCard key={item.uid} product={item} />

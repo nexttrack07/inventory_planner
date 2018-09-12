@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { ScrollView } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { connect } from "react-redux";
 import { addProduct, uploadProduct } from "../actions/ProductActions";
 import { Input, Button } from "./common";
@@ -12,7 +12,13 @@ class AddProduct extends Component {
   };
   render() {
     return (
-      <ScrollView style={styles.viewStyle}>
+      <KeyboardAwareScrollView
+        resetScrollToCoords={{ x: 0, y: 0 }}
+        scrollEnabled
+        contentContainerStyle={styles.viewStyle}
+        behavior="padding"
+        enabled
+      >
         <Input
           label="Product"
           placeholder="Enter Product Name"
@@ -29,7 +35,7 @@ class AddProduct extends Component {
           }
           value={this.props.quantity}
           clearTextOnFocus
-          keyboardType="number-pad"
+          keyboardType="decimal-pad"
         />
         <Input
           label="Sales"
@@ -39,7 +45,7 @@ class AddProduct extends Component {
           }
           value={this.props.sales}
           clearTextOnFocus
-          keyboardType="number-pad"
+          keyboardType="decimal-pad"
         />
         <Input
           label="Lead Time"
@@ -49,7 +55,7 @@ class AddProduct extends Component {
           }
           value={this.props.leadTime}
           clearTextOnFocus
-          keyboardType="number-pad"
+          keyboardType="decimal-pad"
         />
         <Input
           label="CPU"
@@ -57,10 +63,10 @@ class AddProduct extends Component {
           onChangeText={value => this.props.addProduct({ prop: "cost", value })}
           value={this.props.cost}
           clearTextOnFocus
-          keyboardType="number-pad"
+          keyboardType="decimal-pad"
         />
         <Button text="Save" onPress={() => this.onButtonPress()} />
-      </ScrollView>
+      </KeyboardAwareScrollView>
     );
   }
 }

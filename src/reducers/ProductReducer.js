@@ -18,7 +18,14 @@ export default (state = INITIAL_STATE, action) => {
     case ADD_PRODUCT:
       return { ...state, [action.payload.prop]: action.payload.value };
     case PRODUCT_ADDED:
-      return { INITIAL_STATE };
+      return {
+        ...state,
+        product: "",
+        quantity: "",
+        sales: "",
+        leadTime: "",
+        cost: ""
+      };
     case PRODUCT_FETCH_SUCCESS:
       console.log(action.payload);
       return { ...state, products: action.payload };
